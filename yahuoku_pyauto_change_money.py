@@ -34,7 +34,7 @@ from pyscreeze import ImageNotFoundException
 import cv2
 import pyperclip #クリップボードへのコピーで使用 
 import tkinter
-
+##
 #今日
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 #Pandas.dfの準備
