@@ -75,6 +75,7 @@ os.environ['PATH'] = os.environ['PATH'] + path
 global startline
 global pricecut
 
+#git commit　--amend
 class Listing :
     x_pre,y_pre,w_pre,h_pre = 0,0,0,0
 
