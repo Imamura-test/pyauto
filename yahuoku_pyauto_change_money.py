@@ -97,6 +97,7 @@ class Listing :
         root.geometry('300x200')
         # 画面タイトル
         root.title('テキストボックス')
+        
         # ラベル
         lbl1 = tkinter.Label(text='開始する行')
         lbl1.place(x=10, y=50)
