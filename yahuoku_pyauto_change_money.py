@@ -34,11 +34,11 @@ from pyscreeze import ImageNotFoundException
 import cv2
 import pyperclip #クリップボードへのコピーで使用 
 import tkinter
-##git diff
+
 #今日
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 #Pandas.dfの準備
-
+##
 jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
 spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
@@ -75,7 +75,6 @@ os.environ['PATH'] = os.environ['PATH'] + path
 global startline
 global pricecut
 
-#git commit　--amend
 class Listing :
     x_pre,y_pre,w_pre,h_pre = 0,0,0,0
 
@@ -98,6 +97,7 @@ class Listing :
         root.geometry('300x200')
         # 画面タイトル
         root.title('テキストボックス')
+        
         # ラベル
         lbl1 = tkinter.Label(text='開始する行')
         lbl1.place(x=10, y=50)
@@ -234,69 +234,74 @@ def main():
 
     for _ in range(120):
 ##画像up##
-        imagenum = ''
-        print("start")
-        line_num = line_num + 1
-        serialno,product_name,description,money,image_num_first,image_num_Last,current_price = listing.getinformetion(line_num)
-        newprice = current_price - 10
-        #出品する商品がない場合、強制終了
-        if product_name == "finish" :
-            sys.exit(1)
-        else:
-            pass
-        
-        ##値下げする商品を見つける##
-        for _ in range(30):
-            try:
-                time.sleep(0.5)
-                x, y, w, h = listing.posi("sc" + str(serialno))
-                break
-            except :
-                ##画像が見つからない場合、スクロールする
-                pag.moveTo(900, 600)
-                pag.scroll(10)
+        try:
+            imagenum = ''
+            print("start")
+            line_num = line_num + 1
+            serialno,product_name,description,money,image_num_first,image_num_Last,current_price = listing.getinformetion(line_num)
+            newprice = current_price - 10
+            #出品する商品がない場合、強制終了
+            if product_name == "finish" :
+                sys.exit(1)
+            else:
+                pass
+            
+            ##値下げする商品を見つける##
+            for _ in range(30):
+                try:
+                    time.sleep(0.5)
+                    x, y, w, h = listing.posi("sc" + str(serialno))
+                    break
+                except :
+                    ##画像が見つからない場合、スクロールする
+                    pag.moveTo(900, 600)
+                    pag.scroll(10)
+                    time.sleep(1)
+                    print("スクロール")            
+            listing.move(x, y, w, h)
+                    
+            ##編集する##
+            x, y, w, h = listing.posi("henshuusuru")
+            listing.move(x, y , w, h)
+            time.sleep(1)
+            ##スクロール##
+            for _ in range(3):
+                pag.scroll(-100)
                 time.sleep(1)
-                print("スクロール")            
-        listing.move(x, y, w, h)
-                   
-        ##編集する##
-        x, y, w, h = listing.posi("henshuusuru")
-        listing.move(x, y , w, h)
-        time.sleep(1)
-        ##スクロール##
-        for _ in range(3):
-            pag.scroll(-100)
+            ##販売価格##
+            x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + "kakakuhenkou" + '.jpg',grayscale=True,confidence=.7)
+            ##画像の下端中央をクリック##
+            listing.move(x, y+50, w, h)
+            for _ in range(4):
+                pag.hotkey('backspace')
+                pag.hotkey('delete')
+            
+            pyperclip.copy(newprice)
+            ##スプレッドシートに書き込む##
+            worksheet.update_cell(line_num, 15, str(newprice))
+            pag.hotkey('ctrl', 'v')
             time.sleep(1)
-        ##販売価格##
-        x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + "kakakuhenkou" + '.jpg',grayscale=True,confidence=.7)
-        ##画像の下端中央をクリック##
-        listing.move(x, y+50, w, h)
-        for _ in range(4):
-            pag.hotkey('backspace')
-            pag.hotkey('delete')
-        
-        pyperclip.copy(newprice)
-        ##スプレッドシートに書き込む##
-        worksheet.update_cell(line_num, 15, str(newprice))
-        pag.hotkey('ctrl', 'v')
-        time.sleep(1)
-        ##スクロール##
-        for _ in range(3):
-            pag.scroll(-100)
-            time.sleep(1)
-        ##変更する##
-        x, y, w, h = listing.posi("henkousuru")
-        listing.move(x, y, w, h)
-        time.sleep(3)
-        ##スクロール
-        for _ in range(3):
-            pag.scroll(-100)
-            time.sleep(1)
-        ##戻る##
-        x, y, w, h = listing.posi("modoru_2")
-        listing.move(x, y, w, h)
-  
-   
+            ##スクロール##
+            for _ in range(3):
+                pag.scroll(-100)
+                time.sleep(1)
+            ##変更する##
+            x, y, w, h = listing.posi("henkousuru")
+            listing.move(x, y, w, h)
+            time.sleep(3)
+            ##スクロール
+            for _ in range(3):
+                pag.scroll(-100)
+                time.sleep(1)
+            ##戻る##
+            x, y, w, h = listing.posi("modoru_2")
+            listing.move(x, y, w, h)
+            
+        except :
+            for _ in range(20):
+                pag.scroll(-100)
+                time.sleep(0.5)
+            time.sleep(1)  
 main()
         
  
