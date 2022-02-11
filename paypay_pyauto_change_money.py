@@ -1,36 +1,19 @@
 from distutils.command import config
 import gspread
-import json
-import selenium
 from oauth2client.service_account import ServiceAccountCredentials
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 from time import sleep
 import os
-import csv
-import pandas as pd
-import io
 from urllib import request
-import urllib.parse
-import re
 from PIL import Image
-from selenium.webdriver.support.select import Select
-import random
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-                 # パスを通すためのコード
-import traceback
-from selenium.common.exceptions import TimeoutException
 import sys
 from datetime import datetime, date, timedelta
 import datetime
 import pyautogui as pag
 import pyocr
 import pyocr.builders
-import pyscreeze
 from pyscreeze import ImageNotFoundException
 import cv2
 import pyperclip #クリップボードへのコピーで使用 
@@ -40,28 +23,12 @@ import tkinter
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 #Pandas.dfの準備
 ##
+
+
+# Google Spread Sheetsにアクセス
 jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
 spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
-
-
-item_not_list = open("item_not_list.txt").read().splitlines()
-
-#chrome,Chrome Optionsの設定
-options = Options()
-#options.add_argument('--headless')                 # headlessモードを使用する
-#options.add_argument('--disable-gpu')              # headlessモードで暫定的に必要なフラグ(そのうち不要になる)
-options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
-options.add_argument('--proxy-server="direct://"') # Proxy経由ではなく直接接続する
-options.add_argument('--proxy-bypass-list=*')      # すべてのホスト名
-options.add_argument('--start-maximized')          # 起動時にウィンドウを最大化する
-# options.add_argument('--incognito')          # シークレットモードの設定を付与
-options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-options.add_argument('--user-data-dir=' + profile_path)
-options.add_argument('--lang=ja')
-
-options.add_argument("--remote-debugging-port=9222") 
-# Google Spread Sheetsにアクセス
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(jsonf, scope)
 gc = gspread.authorize(credentials)
@@ -71,18 +38,15 @@ f = worksheet
 ##Tesseractのpath
 path='C:\\Program Files\\Tesseract-OCR'
 os.environ['PATH'] = os.environ['PATH'] + path
-
 ##global関数##
 global startline
 global pricecut
 
-class RakumaChangeMoney :
+class PaypayChangeMoney :
     x_pre,y_pre,w_pre,h_pre = 0,0,0,0
-
 
     #textbox
     def textbox(self):
-
         def btn_event():
             global startline
             global pricecut
@@ -123,15 +87,9 @@ class RakumaChangeMoney :
         serialno = int(worksheet.cell(line_num, 16).value) #現在の価格
         return serialno,product_name,description,money,image_num_first,image_num_Last,current_price
 
-
-
     
     #ポジショニング
     def posi(self,imagename):      
-        print("start1")
-        # for count  in range(5):
-        #     try:
-        #         #locateOnScreenでは左上のx座標, 左上のy座標, 幅, 高さのタプルを返す。
         print(imagename)
         for count in range(70):
             try:
@@ -148,18 +106,6 @@ class RakumaChangeMoney :
                 else:
                     pass 
         return x,y,w,h
-        #             break
-        #     except ImageNotFoundException:
-        #         #1秒待つ
-        #         time.sleep(1)
-        # ##所定の画像が見つからない場合、ひとつ前の動作を行う。
-
-        # else:
-        #     print(self.x_pre,self.y_pre,self.w_pre,self.h_pre) 
-        #     self.move(self.x_pre,self.y_pre,self.w_pre,self.h_pre)
-        #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=.99)
-        #     print(x,y,w,h)        
-        # return x,y,w,h
 
     #マウス移動、クリック
     def move(self,x, y, w, h):
@@ -199,14 +145,6 @@ class RakumaChangeMoney :
             if(d.content== product_name): #Anacondaのアイコンを認識したらクリックする
                 x1,y1 = d.position()[0]
                 x2,y2 = d.position()[1]
-        #     except :
-        #         ##画像が見つからない場合、スクロールする
-        #         pag.scroll(-100)
-        #         time.sleep(0.5)
-        #         print("スクロール")
-        # else:
-        #     print('対象が見つかりません')
-
         x,y,w,h = x1,y1,x2-x1,y2-y1   
         return x,y,w,h 
 
@@ -214,7 +152,7 @@ class RakumaChangeMoney :
 def main():
     global startline
     global pricecut
-    listing = RakumaChangeMoney()
+    listing = PaypayChangeMoney()
     listing.textbox()
     print(startline)
     print(pricecut)
@@ -253,22 +191,6 @@ def main():
                 x, y, w, h = listing.posi(imagename) 
                 print(imagename)
                 break       
-
-
-
-                # if editcount == 0 :
-                #     time.sleep(0.5)                               
-                #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=0.95)
-                #     print(imagename)
-                #     break                
-                # else:
-                #     #2つめ以降、見つからない場合、confidenceをさげる
-                #     time.sleep(0.5)
-                #     conf = (int(95) - elem)*0.01 
-                #     print(conf) 
-                #     print(imagename)              
-                #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=conf)
-                #     break
             except :
                 ##画像が見つからない場合、スクロールする
                 pag.moveTo(900, 600)
@@ -307,15 +229,7 @@ def main():
         x, y, w, h = listing.posi("henkousuru")
         listing.move(x, y, w, h)
         time.sleep(3)
-        ##スクロール
-        # for _ in range(3):
-        #     pag.scroll(-100)
-        #     time.sleep(1)
-        # ##戻る##
-        # try:
-        #     x, y, w, h = listing.posi("modoru_2")
-        #     listing.move(x, y, w, h)                
-        # except :
+
         try:
             imagename = "brand"
             x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=0.95)
@@ -333,7 +247,6 @@ def main():
                 ##戻る##
             x, y, w, h = listing.posi("modoru_2")
             listing.move(x, y, w, h)   
-
            
 # main()
         

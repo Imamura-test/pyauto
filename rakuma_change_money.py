@@ -1,3 +1,4 @@
+import paypay_pyauto_change_money
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from selenium import webdriver
@@ -15,29 +16,28 @@ from selenium.common.exceptions import TimeoutException
 from datetime import datetime, date, timedelta
 import datetime
 
-class RakumaChangemoney:
-    
-    def item_id_get():
-        
+now = '{0:%Y%m%d}'.format(datetime.datetime.now())
+#Pandas.dfの準備
 
-#今日
-        now = '{0:%Y%m%d}'.format(datetime.datetime.now())
-        #Pandas.dfの準備
+jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
+spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
+profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
+options = Options()
+options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
+options.add_argument('--proxy-server="direct://"') # Proxy経由ではなく直接接続する
+options.add_argument('--proxy-bypass-list=*')      # すべてのホスト名
+options.add_argument('--start-maximized')          # 起動時にウィンドウを最大化する
+# options.add_argument('--incognito')          # シークレットモードの設定を付与
+options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+options.add_argument('--user-data-dir=' + profile_path)
+options.add_argument('--lang=ja')
+options.add_argument("--remote-debugging-port=9222") 
 
-        jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
-        spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
-        profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
-        options = Options()
-        options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
-        options.add_argument('--proxy-server="direct://"') # Proxy経由ではなく直接接続する
-        options.add_argument('--proxy-bypass-list=*')      # すべてのホスト名
-        options.add_argument('--start-maximized')          # 起動時にウィンドウを最大化する
-        # options.add_argument('--incognito')          # シークレットモードの設定を付与
-        options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-        options.add_argument('--user-data-dir=' + profile_path)
-        options.add_argument('--lang=ja')
-
-        options.add_argument("--remote-debugging-port=9222") 
+class RakumaChangemoney:    
+    def item_id_get(self):
+        paypay_pyauto_change_money.PaypayChangeMoney.textbox(self)
+        startline = paypay_pyauto_change_money.startline
+        pricecut = paypay_pyauto_change_money.pricecut
         driver = webdriver.Chrome(ChromeDriverManager().install() , options = options)
         wait = WebDriverWait(driver=driver, timeout=30)
 
@@ -54,7 +54,7 @@ class RakumaChangemoney:
         SPREADSHEET_KEY = spread_sheet_key
         worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
         f = worksheet
-        # 続きを見るを押す
+
         item_id = []
         driver.get('https://fril.jp/sell')
         time.sleep(3)
@@ -96,7 +96,7 @@ class RakumaChangemoney:
             elem = driver.find_element_by_xpath('//*[@id="sell_price"]')
             price = elem.get_attribute('value')
             print(price)
-            price = str(int(price) - 100)
+            price = str(int(price) - pricecut)
             elem.clear()
             elem.send_keys(str(price))
             wait.until(EC.presence_of_all_elements_located)
@@ -113,5 +113,3 @@ class RakumaChangemoney:
 def main():
     changemoney = RakumaChangemoney()
     changemoney.item_id_get()
-    driver.close()
-

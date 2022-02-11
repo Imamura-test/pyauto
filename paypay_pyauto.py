@@ -1,37 +1,22 @@
+from distutils.command import config
 import gspread
-import json
-import selenium
 from oauth2client.service_account import ServiceAccountCredentials
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 from time import sleep
 import os
-import csv
-import pandas as pd
-import io
 from urllib import request
-import urllib.parse
-import re
 from PIL import Image
-from selenium.webdriver.support.select import Select
-import random
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-                 # パスを通すためのコード
-import traceback
-from selenium.common.exceptions import TimeoutException
 import sys
 from datetime import datetime, date, timedelta
 import datetime
 import pyautogui as pag
-import pyocr
-import pyscreeze
+import pyocr.builders
 from pyscreeze import ImageNotFoundException
 import cv2
 import pyperclip #クリップボードへのコピーで使用 
+
 
 #今日
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
@@ -41,37 +26,27 @@ jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
 spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
 
+#今日
+now = '{0:%Y%m%d}'.format(datetime.datetime.now())
+#Pandas.dfの準備
+##
 
-item_not_list = open("item_not_list.txt").read().splitlines()
-
-#chrome,Chrome Optionsの設定
-options = Options()
-#options.add_argument('--headless')                 # headlessモードを使用する
-#options.add_argument('--disable-gpu')              # headlessモードで暫定的に必要なフラグ(そのうち不要になる)
-options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
-options.add_argument('--proxy-server="direct://"') # Proxy経由ではなく直接接続する
-options.add_argument('--proxy-bypass-list=*')      # すべてのホスト名
-options.add_argument('--start-maximized')          # 起動時にウィンドウを最大化する
-# options.add_argument('--incognito')          # シークレットモードの設定を付与
-options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-options.add_argument('--user-data-dir=' + profile_path)
-options.add_argument('--lang=ja')
-
-options.add_argument("--remote-debugging-port=9222") 
 # Google Spread Sheetsにアクセス
+jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
+spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
+profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(jsonf, scope)
 gc = gspread.authorize(credentials)
 SPREADSHEET_KEY = spread_sheet_key
 worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
 f = worksheet
+##Tesseractのpath
+path='C:\\Program Files\\Tesseract-OCR'
+os.environ['PATH'] = os.environ['PATH'] + path
 
-
-
-
-class RakumaRelist :
+class Paypay :
     x_pre,y_pre,w_pre,h_pre = 0,0,0,0
-
 
     #スプレッドシートから必要な情報を取得する
     def getinformetion(self,line_num):
@@ -81,8 +56,6 @@ class RakumaRelist :
         image_num_first = int(worksheet.cell(line_num, 12).value)
         image_num_Last = int(worksheet.cell(line_num, 13).value)
         return product_name,description,money,image_num_first,image_num_Last
-
-
     
     #ポジショニング
     def posi(self,imagename):      
@@ -108,8 +81,6 @@ class RakumaRelist :
             x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=.8)
             print(x,y,w,h)        
         return x,y,w,h
-
-
     
     #マウス移動、クリック
     def move(self,x, y, w, h):
@@ -120,7 +91,7 @@ class RakumaRelist :
         time.sleep(3)
     
 def main():
-    listing = RakumaRelist()
+    listing = Paypay()
     line_num = int(93)        
     for _ in range(120):
 ##画像up##
@@ -190,8 +161,7 @@ def main():
         pag.moveTo(965, 595, duration=0.5)        
         pag.click()   
         pag.moveTo(1165, 595, duration=0.5)
-        pag.click()
-        
+        pag.click()        
             
         ##完了##
         x, y, w, h = listing.posi("kanryou")

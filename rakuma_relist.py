@@ -16,24 +16,25 @@ import sys
 from datetime import datetime, date, timedelta
 import datetime
 
+now = '{0:%Y%m%d}'.format(datetime.datetime.now())
+#Pandas.dfの準備
+jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
+spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
+profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
+item_not_list = open("item_not_list.txt").read().splitlines()
+#chrome,Chrome Optionsの設定
+options = Options()
+options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
+options.add_argument('--proxy-server="direct://"') # Proxy経由ではなく直接接続する
+options.add_argument('--proxy-bypass-list=*')      # すべてのホスト名
+options.add_argument('--start-maximized')          # 起動時にウィンドウを最大化する
+options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+options.add_argument('--user-data-dir=' + profile_path)
+options.add_argument('--lang=ja')
+options.add_argument("--remote-debugging-port=9222") 
+
 class RakumaRelist:
-    def item_id_get():
-        now = '{0:%Y%m%d}'.format(datetime.datetime.now())
-        #Pandas.dfの準備
-        jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
-        spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
-        profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
-        item_not_list = open("item_not_list.txt").read().splitlines()
-        #chrome,Chrome Optionsの設定
-        options = Options()
-        options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
-        options.add_argument('--proxy-server="direct://"') # Proxy経由ではなく直接接続する
-        options.add_argument('--proxy-bypass-list=*')      # すべてのホスト名
-        options.add_argument('--start-maximized')          # 起動時にウィンドウを最大化する
-        options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-        options.add_argument('--user-data-dir=' + profile_path)
-        options.add_argument('--lang=ja')
-        options.add_argument("--remote-debugging-port=9222") 
+    def item_id_get(self):
         driver = webdriver.Chrome(ChromeDriverManager().install() , options = options)
         wait = WebDriverWait(driver=driver, timeout=30)
         driver.implicitly_wait(10)
