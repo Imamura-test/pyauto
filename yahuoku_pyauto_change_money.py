@@ -1,3 +1,4 @@
+from distutils.command import config
 import gspread
 import json
 import selenium
@@ -75,7 +76,7 @@ os.environ['PATH'] = os.environ['PATH'] + path
 global startline
 global pricecut
 
-class Listing :
+class RakumaChangeMoney :
     x_pre,y_pre,w_pre,h_pre = 0,0,0,0
 
 
@@ -87,9 +88,7 @@ class Listing :
             global pricecut
             startline = int(txt1.get())
             pricecut  = int(txt2.get())            
-            root.destroy()
-
-            
+            root.destroy()            
 
         # Tkクラス生成
         root = tkinter.Tk()
@@ -97,7 +96,6 @@ class Listing :
         root.geometry('300x200')
         # 画面タイトル
         root.title('テキストボックス')
-        
         # ラベル
         lbl1 = tkinter.Label(text='開始する行')
         lbl1.place(x=10, y=50)
@@ -113,14 +111,6 @@ class Listing :
         btn.place(x=140, y=170)
         # 表示
         root.mainloop()
-
-        # return startline,pricecut
-    
-
-
-
-        
-
 
     #スプレッドシートから必要な情報を取得する
     def getinformetion(self,line_num):
@@ -143,10 +133,20 @@ class Listing :
         #     try:
         #         #locateOnScreenでは左上のx座標, 左上のy座標, 幅, 高さのタプルを返す。
         print(imagename)
-                
-        x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=.95)
-        self.x_pre,self.y_pre,self.w_pre,self.h_pre = x,y,w,h
-        print(x,y,w,h)
+        for count in range(70):
+            try:
+                conf = (int(100) - count*0.1)*0.01 
+                print(conf)                
+                x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=conf)
+                self.x_pre,self.y_pre,self.w_pre,self.h_pre = x,y,w,h
+                print(x,y,w,h)
+                break
+
+            except:
+                if count == 69 :
+                    raise
+                else:
+                    pass 
         return x,y,w,h
         #             break
         #     except ImageNotFoundException:
@@ -214,7 +214,7 @@ class Listing :
 def main():
     global startline
     global pricecut
-    listing = Listing()
+    listing = RakumaChangeMoney()
     listing.textbox()
     print(startline)
     print(pricecut)
@@ -232,76 +232,109 @@ def main():
         time.sleep(0.5)
     time.sleep(1)
 
-    for _ in range(120):
+    for editcount in range(120):
 ##画像up##
+        imagenum = ''
+        print("start")
+        line_num = line_num + 1
+        serialno,product_name,description,money,image_num_first,image_num_Last,current_price = listing.getinformetion(line_num)
+        newprice = current_price - pricecut
+        #出品する商品がない場合、強制終了
+        if product_name == "finish" :
+            sys.exit(1)
+        else:
+            pass
+        
+        ##値下げする商品を見つける##
+        for elem in range(30):
+            try:
+                imagename = "sc" + str(serialno)
+                ##new
+                x, y, w, h = listing.posi(imagename) 
+                print(imagename)
+                break       
+
+
+
+                # if editcount == 0 :
+                #     time.sleep(0.5)                               
+                #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=0.95)
+                #     print(imagename)
+                #     break                
+                # else:
+                #     #2つめ以降、見つからない場合、confidenceをさげる
+                #     time.sleep(0.5)
+                #     conf = (int(95) - elem)*0.01 
+                #     print(conf) 
+                #     print(imagename)              
+                #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=conf)
+                #     break
+            except :
+                ##画像が見つからない場合、スクロールする
+                pag.moveTo(900, 600)
+                pag.scroll(10)
+                time.sleep(1)
+                print("スクロール")            
+        listing.move(x, y, w, h)
+                
+        ##編集する##
+        x, y, w, h = listing.posi("henshuusuru")
+        listing.move(x, y , w, h)
+        time.sleep(2)
+        ##スクロール##
+        for _ in range(3):
+            pag.scroll(-100)
+            time.sleep(1)
+        ##販売価格##
+        x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + "kakakuhenkou" + '.jpg',grayscale=True,confidence=.7)
+        ##画像の下端中央をクリック##
+        listing.move(x, y+50, w, h)
+        for _ in range(4):
+            pag.hotkey('right')
+            pag.hotkey('right')
+            pag.hotkey('backspace')
+        
+        pyperclip.copy(newprice)
+        ##スプレッドシートに書き込む##
+        worksheet.update_cell(line_num, 15, str(newprice))
+        pag.hotkey('ctrl', 'v')
+        time.sleep(1)
+        ##スクロール##
+        for _ in range(3):
+            pag.scroll(-100)
+            time.sleep(1)
+        ##変更する##
+        x, y, w, h = listing.posi("henkousuru")
+        listing.move(x, y, w, h)
+        time.sleep(3)
+        ##スクロール
+        # for _ in range(3):
+        #     pag.scroll(-100)
+        #     time.sleep(1)
+        # ##戻る##
+        # try:
+        #     x, y, w, h = listing.posi("modoru_2")
+        #     listing.move(x, y, w, h)                
+        # except :
         try:
-            imagenum = ''
-            print("start")
-            line_num = line_num + 1
-            serialno,product_name,description,money,image_num_first,image_num_Last,current_price = listing.getinformetion(line_num)
-            newprice = current_price - 10
-            #出品する商品がない場合、強制終了
-            if product_name == "finish" :
-                sys.exit(1)
-            else:
-                pass
-            
-            ##値下げする商品を見つける##
-            for _ in range(30):
-                try:
-                    time.sleep(0.5)
-                    x, y, w, h = listing.posi("sc" + str(serialno))
-                    break
-                except :
-                    ##画像が見つからない場合、スクロールする
-                    pag.moveTo(900, 600)
-                    pag.scroll(10)
-                    time.sleep(1)
-                    print("スクロール")            
+            imagename = "brand"
+            x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=0.95)
             listing.move(x, y, w, h)
-                    
-            ##編集する##
-            x, y, w, h = listing.posi("henshuusuru")
-            listing.move(x, y , w, h)
-            time.sleep(1)
-            ##スクロール##
+            time.sleep(5)
             for _ in range(3):
                 pag.scroll(-100)
-                time.sleep(1)
-            ##販売価格##
-            x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + "kakakuhenkou" + '.jpg',grayscale=True,confidence=.7)
-            ##画像の下端中央をクリック##
-            listing.move(x, y+50, w, h)
-            for _ in range(4):
-                pag.hotkey('backspace')
-                pag.hotkey('delete')
-            
-            pyperclip.copy(newprice)
-            ##スプレッドシートに書き込む##
-            worksheet.update_cell(line_num, 15, str(newprice))
-            pag.hotkey('ctrl', 'v')
-            time.sleep(1)
-            ##スクロール##
-            for _ in range(3):
-                pag.scroll(-100)
-                time.sleep(1)
-            ##変更する##
-            x, y, w, h = listing.posi("henkousuru")
-            listing.move(x, y, w, h)
-            time.sleep(3)
-            ##スクロール
-            for _ in range(3):
-                pag.scroll(-100)
-                time.sleep(1)
-            ##戻る##
+                time.sleep(1)        
             x, y, w, h = listing.posi("modoru_2")
             listing.move(x, y, w, h)
-            
-        except :
-            for _ in range(20):
+        except:
+            for _ in range(3):
                 pag.scroll(-100)
-                time.sleep(0.5)
-            time.sleep(1)  
-main()
+                time.sleep(1)
+                ##戻る##
+            x, y, w, h = listing.posi("modoru_2")
+            listing.move(x, y, w, h)   
+
+           
+# main()
         
  
