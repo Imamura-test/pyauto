@@ -19,7 +19,7 @@ import datetime
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 #Pandas.dfの準備
 
-jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
+
 spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
 options = Options()
@@ -48,13 +48,18 @@ class RakumaChangemoney:
         print(driver.title) # ページタイトルの確認
 
         # Google Spread Sheetsにアクセス
+        ssk = open("spread_sheet_key.txt").read()
+        jf =  open("jsonf.txt").read()
+        # Google Spread Sheetsにアクセス
+        spread_sheet_key = str(ssk)
+        jsonf = str(jf)
+        profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
         scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
         credentials = ServiceAccountCredentials.from_json_keyfile_name(jsonf, scope)
         gc = gspread.authorize(credentials)
         SPREADSHEET_KEY = spread_sheet_key
         worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
         f = worksheet
-
         item_id = []
         driver.get('https://fril.jp/sell')
         time.sleep(3)

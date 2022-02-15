@@ -21,12 +21,8 @@ import datetime
 
 #今日
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
-#Pandas.dfの準備
-
-jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
-spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
-item_not_list = open("item_not_list.txt").read().splitlines()
+
 
 #chrome,Chrome Optionsの設定
 options = Options()
@@ -56,12 +52,6 @@ class YahuokuChangeMoney():
         print(driver.title) # ページタイトルの確認
 
         # Google Spread Sheetsにアクセス
-        scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(jsonf, scope)
-        gc = gspread.authorize(credentials)
-        SPREADSHEET_KEY = spread_sheet_key
-        worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
-        f = worksheet
         next_url = str("first")
 
         # 出品した商品ページから商品IDを取得する関数

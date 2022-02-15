@@ -21,7 +21,7 @@ now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
 spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
-item_not_list = open("item_not_list.txt").read().splitlines()
+
 #chrome,Chrome Optionsの設定
 options = Options()
 options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
@@ -42,6 +42,12 @@ class RakumaRelist:
         print(driver.title) # ページタイトルの確認
 
         # Google Spread Sheetsにアクセス
+        ssk = open("spread_sheet_key.txt").read()
+        jf =  open("jsonf.txt").read()
+        # Google Spread Sheetsにアクセス
+        spread_sheet_key = str(ssk)
+        jsonf = str(jf)
+        profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
         scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
         credentials = ServiceAccountCredentials.from_json_keyfile_name(jsonf, scope)
         gc = gspread.authorize(credentials)

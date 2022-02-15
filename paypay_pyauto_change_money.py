@@ -24,10 +24,11 @@ now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 #Pandas.dfの準備
 ##
 
-
+ssk = open("spread_sheet_key.txt").read()
+jf =  open("jsonf.txt").read()
 # Google Spread Sheetsにアクセス
-jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
-spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
+spread_sheet_key = str(ssk)
+jsonf = str(jf)
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 credentials = ServiceAccountCredentials.from_json_keyfile_name(jsonf, scope)
