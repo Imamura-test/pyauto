@@ -17,8 +17,6 @@ from datetime import datetime, date, timedelta
 import datetime
 
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
-jsonf = "webscraping-7ad1c-bc2ff42a463d.json"
-spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
 #chrome,Chrome Optionsの設定
 options = Options()
