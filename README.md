@@ -1,47 +1,59 @@
-# pyauto
-Welcome to <%= projectName %> 👋
-<% if (isProjectOnNpm) { -%> Version <% } -%> <% if (projectVersion && !isProjectOnNpm) { -%> Version <% } -%> <% if (projectPrerequisites) { -%> <% projectPrerequisites.map(({ name, value }) => { -%>  <% }) -%> <% } -%> <% if (projectDocumentationUrl) { -%> Documentation <% } -%> <% if (isGithubRepos) { -%> Maintenance <% } -%> <% if (licenseName) { -%> License: <%= licenseName %> <% } -%> <% if (authorTwitterUsername) { -%> Twitter: <%= authorTwitterUsername %> <% } -%>
-
-<% if (projectDescription) { -%>
-<%= projectDescription %> <% } -%> <% if (projectHomepage) { -%>
-
-🏠 Homepage
-<% } -%> <% if (projectDemoUrl) { -%>
-
-✨ Demo
-<% } -%> <% if (projectPrerequisites && projectPrerequisites.length) { -%>
-
-Prerequisites
-<% projectPrerequisites.map(({ name, value }) => { -%>
-
-<%= name %> <%= value %> <% }) -%> <% } -%> <% if (installCommand) { -%>
-Install
-<%= installCommand %>
-<% } -%> <% if (usage) { -%>
-
-Usage
-<%= usage %>
-<% } -%> <% if (testCommand) { -%>
-
-Run tests
-<%= testCommand %>
-<% } -%> <% if (authorName || authorTwitterUsername || authorGithubUsername) { -%>
-
-Author
-<% if (authorName) { %> 👤 <%= authorName %> <% } %> <% if (authorWebsite) { -%>
-
-Website: <%= authorWebsite %> <% } -%> <% if (authorTwitterUsername) { -%>
-Twitter: [@<%= authorTwitterUsername %>](https://twitter.com/<%= authorTwitterUsername %>) <% } -%> <% if (authorGithubUsername) { -%>
-GitHub: [@<%= authorGithubUsername %>](https://github.com/<%= authorGithubUsername %>) <% } -%> <% if (authorLinkedInUsername) { -%>
-LinkedIn: [@<%= authorLinkedInUsername %>](https://linkedin.com/in/<%= authorLinkedInUsername %>) <% } -%> <% } -%> <% if (issuesUrl) { -%>
-🤝 Contributing
-Contributions, issues and feature requests are welcome!
-Feel free to check issues page. <%= contributingUrl ? You can also take a look at the [contributing guide](${contributingUrl}). : '' %> <% } -%>
-
-Show your support
-Give a ⭐️ if this project helped you! <% if (authorPatreonUsername) { -%>
-
- <% } -%> <% if (licenseName && licenseUrl) { -%>
-📝 License
-<% if (authorName && authorGithubUsername) { -%> Copyright © <%= currentYear %> [<%= authorName %>](https://github.com/<%= authorGithubUsername %>).
-<% } -%> This project is <%= licenseName %> licensed. <% } -%>
+# Name（リポジトリ/プロジェクト/OSSなどの名前）
+ 
+分かりやすくてカッコイイ名前をつける（今回は"hoge"という名前をつける）
+ 
+"hoge"が何かを簡潔に紹介する
+ 
+# DEMO
+ 
+"hoge"の魅力が直感的に伝えわるデモ動画や図解を載せる
+ 
+# Features
+ 
+"hoge"のセールスポイントや差別化などを説明する
+ 
+# Requirement
+ 
+"hoge"を動かすのに必要なライブラリなどを列挙する
+ 
+* huga 3.5.2
+* hogehuga 1.0.2
+ 
+# Installation
+ 
+Requirementで列挙したライブラリなどのインストール方法を説明する
+ 
+```bash
+pip install huga_package
+```
+ 
+# Usage
+ 
+DEMOの実行方法など、"hoge"の基本的な使い方を説明する
+ 
+```bash
+git clone https://github.com/hoge/~
+cd examples
+python demo.py
+```
+ 
+# Note
+ 
+注意点などがあれば書く
+ 
+# Author
+ 
+作成情報を列挙する
+ 
+* 作成者
+* 所属
+* E-mail
+ 
+# License
+ライセンスを明示する
+ 
+"hoge" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
+ 
+社内向けなら社外秘であることを明示してる
+ 
+"hoge" is Confidential.
