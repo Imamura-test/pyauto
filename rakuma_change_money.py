@@ -20,7 +20,7 @@ now = '{0:%Y%m%d}'.format(datetime.datetime.now())
 #Pandas.dfの準備
 
 
-spread_sheet_key = "1kLMppQEqZyx8xQDyTVodsrUkze78cmbj-AqpL2UECdU"
+
 profile_path = '\\Users\\saita\\AppData\\Local\\Google\\Chrome\\User Data\\seleniumpass'
 options = Options()
 options.add_argument('--disable-extensions')       # すべての拡張機能を無効にする。ユーザースクリプトも無効にする
