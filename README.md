@@ -2,9 +2,10 @@
  
 paypayフリマ、ラクマ、ヤフオクの出品と値下げを自動化するツール
  
-# DEMO
- 
-"hoge"の魅力が直感的に伝えわるデモ動画や図解を載せる
+# デモ動画
+ https://github.com/Imamura-test/pyauto/issues/6#issue-1144030021
+ https://github.com/Imamura-test/pyauto/issues/7#issue-1144031355
+
  
 # Features
  
