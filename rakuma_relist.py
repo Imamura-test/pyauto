@@ -120,7 +120,7 @@ class RakumaRelist:
             wait.until(EC.presence_of_all_elements_located)
             time.sleep(15)
 
-def maim():
+def main():
     relist = RakumaRelist()
     relist.item_id_get()
 
