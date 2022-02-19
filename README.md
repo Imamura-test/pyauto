@@ -6,7 +6,7 @@ paypayフリマ、ラクマ、ヤフオクの出品と値下げを自動化す�
  https://github.com/Imamura-test/pyauto/issues/6#issue-1144030021
  https://github.com/Imamura-test/pyauto/issues/7#issue-1144031355
 
- 
+ https://github.com/Imamura-test/pyauto/issues/8#issue-1144033312
 # Features
  
 "hoge"のセールスポイントや差別化などを説明する
