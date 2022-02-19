@@ -1,20 +1,11 @@
-import gspread
 import paypay_pyauto_change_money
-from oauth2client.service_account import ServiceAccountCredentials
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 import time
-import pandas as pd
-from urllib import request
-from PIL import Image
-from selenium.webdriver.support.select import Select
 import random
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-                 # パスを通すためのコード
-from selenium.common.exceptions import TimeoutException
 import sys
 from datetime import datetime, date, timedelta
 import datetime

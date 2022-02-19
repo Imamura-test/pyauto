@@ -1,12 +1,7 @@
-from distutils.command import config
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 import time
-from time import sleep
 import os
-from urllib import request
 from PIL import Image
 import sys
 from datetime import datetime, date, timedelta
@@ -14,7 +9,6 @@ import datetime
 import pyautogui as pag
 import pyocr
 import pyocr.builders
-from pyscreeze import ImageNotFoundException
 import cv2
 import pyperclip #クリップボードへのコピーで使用 
 import tkinter
