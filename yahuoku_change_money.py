@@ -77,7 +77,8 @@ class YahuokuChangeMoney():
                             print("break1")
                             break
                 else:
-                    continue                                 
+                    continue  
+                break                        
 
         except:
             print("item_id_getは中断されました。")
