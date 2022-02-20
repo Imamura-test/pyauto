@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.alert import Alert
 import sys
 from datetime import datetime, date, timedelta
 import datetime
@@ -47,9 +48,27 @@ class RakumaRelist:
         SPREADSHEET_KEY = spread_sheet_key
         worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
         f = worksheet
-        line_num = int(1)       
+        line_num = int(1)
+
+        #出品している商品を削除
+        while (True):
+            try:
+                driver.get("https://fril.jp/sell")
+                wait.until(EC.presence_of_all_elements_located)
+                time.sleep(3)
+                elem = driver.find_element_by_xpath('//*[@id="ga_click_delete"]')
+                elem.click()
+                wait.until(EC.presence_of_all_elements_located)
+                time.sleep(3)
+                elem = Alert(driver).accept()
+                wait.until(EC.presence_of_all_elements_located)
+                time.sleep(3)
+            except:
+                break
+
         for _ in range(120):
             #今日
+            driver.get("https://fril.jp/sell")
 
             time.sleep(1)
             driver.get("https://fril.jp/item/new")
@@ -120,7 +139,7 @@ class RakumaRelist:
             wait.until(EC.presence_of_all_elements_located)
             time.sleep(15)
 
-def maim():
+def main():
     relist = RakumaRelist()
     relist.item_id_get()
 
