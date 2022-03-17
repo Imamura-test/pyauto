@@ -77,7 +77,7 @@ class Paypay :
     
 def main():
     listing = Paypay()
-    line_num = int(93)        
+    line_num = int(1)        
     for _ in range(120):
 ##画像up##
         imagenum = ''
@@ -211,8 +211,12 @@ def main():
         x, y, w, h = listing.posi("shuppinsuru")
         listing.move(x, y, w, h)
         time.sleep(2)
+        x, y, w, h = listing.posi("brand_shuppin")
+        listing.move(x, y, w, h)
+        time.sleep(2)
         x, y, w, h = listing.posi("tuduketeshuppin")
         listing.move(x, y, w, h)
+        time.sleep(2)
 ##画像を削除##
         x, y, w, h = listing.posi("home")
         listing.move(x, y, w, h)

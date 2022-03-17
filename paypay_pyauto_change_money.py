@@ -12,14 +12,14 @@ import pyocr.builders
 import cv2
 import pyperclip #クリップボードへのコピーで使用 
 import tkinter
+import requests
 
 #今日
 now = '{0:%Y%m%d}'.format(datetime.datetime.now())
-#Pandas.dfの準備
-##
-
+# text情報の入手
 ssk = open("spread_sheet_key.txt").read()
 jf =  open("jsonf.txt").read()
+line_token =  open("linetoken.txt").read() 
 # Google Spread Sheetsにアクセス
 spread_sheet_key = str(ssk)
 jsonf = str(jf)
@@ -30,9 +30,11 @@ gc = gspread.authorize(credentials)
 SPREADSHEET_KEY = spread_sheet_key
 worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
 f = worksheet
+
 ##Tesseractのpath
 path='C:\\Program Files\\Tesseract-OCR'
 os.environ['PATH'] = os.environ['PATH'] + path
+
 ##global関数##
 global startline
 global pricecut
@@ -89,8 +91,26 @@ class PaypayChangeMoney :
         for count in range(70):
             try:
                 conf = (int(100) - count*0.1)*0.01 
-                print(conf)                
-                x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=conf)
+                print(conf)
+                # try:
+                #     #電波が悪い時の対応
+                #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + 'weak_signal' + '.jpg',grayscale=True,confidence=conf)
+
+                #     time.sleep(60)
+                #     self.move(x, y, w, h)
+                #     time.sleep(2)
+                #     x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + 'shuppinsitashouhin' + '.jpg',grayscale=True,confidence=conf)                   
+                #     self.move(x, y, w, h)
+                #     time.sleep(2)
+                #         ##スクロールして一番下の画面に行く
+                #     for _ in range(20):
+                #         pag.scroll(-100)
+                #         time.sleep(0.5)
+                #     time.sleep(1)                
+
+                # except:
+                x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=conf) 
+                    
                 self.x_pre,self.y_pre,self.w_pre,self.h_pre = x,y,w,h
                 print(x,y,w,h)
                 break
@@ -165,84 +185,102 @@ def main():
         time.sleep(0.5)
     time.sleep(1)
 
-    for editcount in range(120):
-##画像up##
-        imagenum = ''
-        print("start")
-        line_num = line_num + 1
-        serialno,product_name,description,money,image_num_first,image_num_Last,current_price = listing.getinformetion(line_num)
-        newprice = current_price - pricecut
-        #出品する商品がない場合、強制終了
-        if product_name == "finish" :
-            sys.exit(1)
-        else:
-            pass
-        
-        ##値下げする商品を見つける##
-        for elem in range(30):
-            try:
-                imagename = "sc" + str(serialno)
-                ##new
-                x, y, w, h = listing.posi(imagename) 
-                print(imagename)
-                break       
-            except :
-                ##画像が見つからない場合、スクロールする
-                pag.moveTo(900, 600)
-                pag.scroll(10)
-                time.sleep(1)
-                print("スクロール")            
-        listing.move(x, y, w, h)
-                
-        ##編集する##
-        x, y, w, h = listing.posi("henshuusuru")
-        listing.move(x, y , w, h)
-        time.sleep(2)
-        ##スクロール##
-        for _ in range(3):
-            pag.scroll(-100)
-            time.sleep(1)
-        ##販売価格##
-        x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + "kakakuhenkou" + '.jpg',grayscale=True,confidence=.7)
-        ##画像の下端中央をクリック##
-        listing.move(x, y+50, w, h)
-        for _ in range(4):
-            pag.hotkey('right')
-            pag.hotkey('right')
-            pag.hotkey('backspace')
-        
-        pyperclip.copy(newprice)
-        ##スプレッドシートに書き込む##
-        worksheet.update_cell(line_num, 15, str(newprice))
-        pag.hotkey('ctrl', 'v')
-        time.sleep(1)
-        ##スクロール##
-        for _ in range(3):
-            pag.scroll(-100)
-            time.sleep(1)
-        ##変更する##
-        x, y, w, h = listing.posi("henkousuru")
-        listing.move(x, y, w, h)
-        time.sleep(3)
 
+    for editcount in range(120):
         try:
-            imagename = "brand"
-            x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=0.95)
+
+            imagenum = ''
+            line_num = line_num + 1
+            print("start")
+            print(line_num )
+            serialno,product_name,description,money,image_num_first,image_num_Last,current_price = listing.getinformetion(line_num)
+            newprice = current_price - pricecut
+            #出品する商品がない場合、強制終了
+            if product_name == "finish" :
+                sys.exit(1)
+            else:
+                pass
+            
+            ##値下げする商品を見つける##
+            for elem in range(30):
+                try:
+                    time.sleep(1)
+                    imagename = "sc" + str(serialno)
+                    ##new
+                    x, y, w, h = listing.posi(imagename) 
+                    print(imagename)
+                    break       
+                except :
+                    ##画像が見つからない場合、スクロールする
+                    pag.moveTo(900, 600)
+                    pag.scroll(10)
+                    time.sleep(1)
+                    print("スクロール")            
             listing.move(x, y, w, h)
+            time.sleep(1)
+                    
+            ##編集する##
+            x, y, w, h = listing.posi("henshuusuru")
+            listing.move(x, y , w, h)
             time.sleep(5)
+            ##スクロール##
             for _ in range(3):
                 pag.scroll(-100)
-                time.sleep(1)        
-            x, y, w, h = listing.posi("modoru_2")
-            listing.move(x, y, w, h)
-        except:
+                time.sleep(2)
+            ##販売価格##
+            x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + "kakakuhenkou" + '.jpg',grayscale=True,confidence=.7)
+            ##画像の下端中央をクリック##
+            listing.move(x, y+50, w, h)
+            for _ in range(4):
+                pag.hotkey('right')
+                pag.hotkey('right')
+                pag.hotkey('backspace')
+            
+            pyperclip.copy(newprice)
+            ##スプレッドシートに書き込む##
+            worksheet.update_cell(line_num, 15, str(newprice))
+            pag.hotkey('ctrl', 'v')
+            time.sleep(1)
+            ##スクロール##
             for _ in range(3):
                 pag.scroll(-100)
                 time.sleep(1)
-                ##戻る##
-            x, y, w, h = listing.posi("modoru_2")
-            listing.move(x, y, w, h)   
+            ##変更する##
+            x, y, w, h = listing.posi("henkousuru")
+            listing.move(x, y, w, h)
+            time.sleep(3)
+
+            try:
+                imagename = "brand"
+                x,y,w,h = pag.locateOnScreen('C:/Users/saita/workspace/lec_rpa/paypay/' + imagename + '.jpg',grayscale=True,confidence=0.95)
+                listing.move(x, y, w, h)
+                time.sleep(5)
+                for _ in range(3):
+                    pag.scroll(-100)
+                    time.sleep(1)        
+                x, y, w, h = listing.posi("modoru_2")
+                listing.move(x, y, w, h)
+            except:
+                for _ in range(3):
+                    pag.scroll(-100)
+                    time.sleep(1)
+                    ##戻る##
+                x, y, w, h = listing.posi("modoru_2")
+                listing.move(x, y, w, h)
+        #失敗した場合、Lineに通知を送る
+        except:
+            #LINEトークンID
+            line_notify_token  = line_token
+            #LINE Notify APIのURL
+            line_notify_api  = 'https://notify-api.line.me/api/notify'
+            #送る内容
+            data = {'message': "スプレッドシート" + str(line_num) + "行目で強制終了しました"}
+            headers = {'Authorization': f'Bearer {line_notify_token}'}
+            requests.post(line_notify_api, headers = headers, data = data)
+            break
+
+
+
+
            
 # main()
-        
- 
